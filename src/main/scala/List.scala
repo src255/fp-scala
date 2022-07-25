@@ -5,13 +5,13 @@ case class Cons[+A](head: A, tail: List[A]) extends List[A]
 object List {
   def sum(l: List[Int]): Int = l match {
     case Nil => 0
-    case Cons(x, xs) => x + sum(xs)
+    case Cons(a, as) => a + sum(as)
   }
 
   def product(l: List[Double]): Double = l match {
     case Nil => 1.0
     case Cons(0.0, _) => 0.0
-    case Cons(x, xs) => x * product(xs)
+    case Cons(a, as) => a * product(as)
   }
 
   def apply[A](as: A*): List[A] =

@@ -10,12 +10,12 @@ sealed trait Tree[+A] {
   }
 
   def map[B](f: A => B): Tree[B] = this match {
-    case Leaf(x) => Leaf(f(x))
+    case Leaf(a) => Leaf(f(a))
     case Branch(l, r) => Branch(l.map(f), r.map(f))
   }
 
   def fold[B](f: A => B)(g: (B, B) => B): B = this match {
-    case Leaf(x) => f(x)
+    case Leaf(a) => f(a)
     case Branch(l, r) => g(l.fold(f)(g), r.fold(f)(g))
   }
 }
@@ -28,7 +28,7 @@ case class Branch[A](left: Tree[A], right: Tree[A]) extends Tree[A]
 object Tree {
   implicit class IntTree(val t: Tree[Int]) extends AnyVal {
     def maximum: Int = t match {
-      case Leaf(x) => x
+      case Leaf(a) => a
       case Branch(l, r) => l.maximum max r.maximum
     }
   }
@@ -38,7 +38,7 @@ object Tree {
   }
 
   def maximum(t: Tree[Int]): Int = t match {
-    case Leaf(x) => x
+    case Leaf(a) => a
     case Branch(l, r) => maximum(l) max maximum(r)
   }
 
@@ -48,12 +48,12 @@ object Tree {
   }
 
   def map[A, B](t: Tree[A])(f: A => B): Tree[B] = t match {
-    case Leaf(x) => Leaf(f(x))
+    case Leaf(a) => Leaf(f(a))
     case Branch(l, r) => Branch(map(l)(f), map(r)(f))
   }
 
   def fold[A, B](t: Tree[A])(f: A => B)(g: (B, B) => B): B = t match {
-    case Leaf(x) => f(x)
+    case Leaf(a) => f(a)
     case Branch(l, r) => g(fold(l)(f)(g), fold(r)(f)(g))
   }
 
@@ -62,13 +62,13 @@ object Tree {
 
 
   def maximum2(t: Tree[Int]): Int =
-    fold(t)(x => x)(_ max _)
+    fold(t)(a => a)(_ max _)
 
 
   def depth2[A](t: Tree[A]): Int =
     fold(t)(_ => 0)(1 + _ max _)
 
   def map2[A, B](t: Tree[A])(f: A => B): Tree[B] =
-    fold(t)(x => Leaf(f(x)): Tree[B])(Branch(_, _))
+    fold(t)(a => Leaf(f(a)): Tree[B])(Branch(_, _))
 
 }
