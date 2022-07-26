@@ -1,3 +1,5 @@
+package hide
+
 sealed trait List[+A]
 case object Nil extends List[Nothing]
 case class Cons[+A](head: A, tail: List[A]) extends List[A]
@@ -128,8 +130,12 @@ object List {
 
   def filter[A](l: List[A])(f: A => Boolean): List[A] = l match {
     case Nil => Nil
-    case Cons(h, t) if f(h) => Cons(h, filter(t)(f))
-    case Cons(h, t) => filter(t)(f)
+    case Cons(h, t) => {
+      if (f(h))
+        Cons(h, filter(t)(f))
+      else
+        filter(t)(f)
+    }
   }
 
   def filter2[A](l: List[A])(f: A => Boolean): List[A] = l match {
