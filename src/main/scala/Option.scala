@@ -63,10 +63,10 @@ object Option {
     traverse(l)(a => a)
 
   def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
-    a.foldLeft(Some(Nil): Option[List[B]])((b, a) => (b, f(a)) match {
+    a.foldRight(Some(Nil): Option[List[B]])((a, b) => (f(a), b) match {
       case (_, None) => None
       case (None, _) => None
-      case (Some(bb), Some(aa)) => Some(bb ::: List(aa))
+      case (Some(aa), Some(bb)) => Some(aa +: bb)
     })
   }
 }
