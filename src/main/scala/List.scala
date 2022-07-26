@@ -48,10 +48,10 @@ object List {
     }
   }
 
-  def append2[A](l1: List[A], l2: List[A]): List[A] = l1 match {
-    case Nil => l2
-    case Cons(h, t) => Cons(h, append2(t, l2))
-  }
+  // def append2[A](l1: List[A], l2: List[A]): List[A] = l1 match {
+  //   case Nil => l2
+  //   case Cons(h, t) => Cons(h, append2(t, l2))
+  // }
 
 
   def init[A](l: List[A]): List[A] = l match {
@@ -93,7 +93,7 @@ object List {
 
 
   def length[A](l: List[A]): Int = {
-    foldLeft[A, Int](l, 0)((b, a) => b + 1)
+    foldLeft(l, 0)((b, a) => b + 1)
   }
   // def reverse[A](l: List[A]): List[A] =
     //   foldLeft(l, Nil: List[A])((b, a) => Cons(a, b))
@@ -165,7 +165,5 @@ object List {
       case (Nil, _) => false
       case (Cons(h1, t1), Cons(h2, t2)) => startsWith(l, sub) || startsWith(t1, sub)
     }
-
   }
-
 }
