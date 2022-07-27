@@ -190,27 +190,20 @@ object Stream {
   //   ints
   // }
 
-  // def fibs: Stream[Int] = {
-  //   def loop(accu1: Int, accu2: Int): Stream[Int] = {
-  //     lazy val ints: Stream[Int] =
-  //       cons(accu1 + accu2, loop(accu2, accu1 + accu2))
-
-  //     ints
-  //   }
-
-  //   cons(0, cons(1, loop(0, 1)))
-  // }
-
-  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = {
-    lazy val stream: Stream[A] = f(z) match {
-      case None         => empty[A]
-      case Some((a, s)) => cons(a, unfold(s)(f))
+  def fibs2: Stream[Int] = {
+    def loop(accu1: Int, accu2: Int): Stream[Int] = {
+      cons(accu1, loop(accu2, accu1 + accu2))
     }
 
-    stream
+    loop(0, 1)
+  }
+
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+    case Some((a, s)) => cons(a, unfold(s)(f))
+    case None         => empty
   }
   // def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
-  //   case None         => empty[A]
+  //   case None         => empty
   //   case Some((a, s)) => cons(a, unfold(s)(f))
   // }
 
