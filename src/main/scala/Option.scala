@@ -3,7 +3,7 @@ import scala.Nil
 
 sealed trait Option[+A] {
   def map[B](f: A => B): Option[B] = this match {
-    case None => None
+    case None    => None
     case Some(a) => Some(f(a))
   }
 
@@ -11,7 +11,7 @@ sealed trait Option[+A] {
     map(f) getOrElse None
 
   def getOrElse[B >: A](default: => B): B = this match {
-    case None => default
+    case None    => default
     case Some(a) => a
   }
 
@@ -19,7 +19,7 @@ sealed trait Option[+A] {
     map(a => Some(a)) getOrElse ob
 
   def filter(f: A => Boolean): Option[A] =
-    flatMap(a => if(f(a)) Some(a) else None)
+    flatMap(a => if (f(a)) Some(a) else None)
 }
 case object None extends Option[Nothing]
 case class Some[+A](get: A) extends Option[A]
@@ -39,8 +39,8 @@ object Option {
         None
       else
         Some(xs.sum / xs.length)
-    mean.map(
-      x => xs.foldLeft(0.0)((b, a) => b + math.pow(a - x, 2)) / xs.length
+    mean.map(x =>
+      xs.foldLeft(0.0)((b, a) => b + math.pow(a - x, 2)) / xs.length
     )
   }
 
@@ -49,7 +49,6 @@ object Option {
       aa <- a
       bb <- b
     } yield f(aa, bb)
-
 
   // def sequence2[A](a: List[Option[A]]): Option[List[A]] = {
   //   a.foldLeft(None: Option[List[A]])((b, a) => (b, a) match {
@@ -63,12 +62,12 @@ object Option {
     traverse(l)(a => a)
 
   def traverse[A, B](a: List[A])(f: A => Option[B]): Option[List[B]] = {
-    a.foldRight(Some(Nil): Option[List[B]])((a, b) => (f(a), b) match {
-      case (_, None) => None
-      case (None, _) => None
-      case (Some(aa), Some(bb)) => Some(aa +: bb)
-    })
+    a.foldRight(Some(Nil): Option[List[B]])((a, b) =>
+      (f(a), b) match {
+        case (_, None)            => None
+        case (None, _)            => None
+        case (Some(aa), Some(bb)) => Some(aa +: bb)
+      }
+    )
   }
 }
-
-

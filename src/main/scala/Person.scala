@@ -7,7 +7,7 @@ object Person {
     if (name == "" || name == null) Left("Name is empty.")
     else Right(new Name(name))
   def mkAge(age: Int): Either[String, Age] =
-    if (age < 0) Left ("Age is out of range.")
+    if (age < 0) Left("Age is out of range.")
     else Right(new Age(age))
 
   def mkPerson(name: String, age: Int): Either[String, Person] =
