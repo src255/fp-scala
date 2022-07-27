@@ -7,3 +7,5 @@ ThisBuild / scalaVersion := "2.13.8"
 ThisBuild / organization := "fpWithScala"
 
 triggeredMessage in ThisBuild := Watched.clearWhenTriggered
+
+reColors := Revolver.noColors
