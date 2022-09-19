@@ -1,10 +1,11 @@
 sealed trait Stream[+A] {
   import Stream._
 
-  def headOption: Option[A] = this match {
-    case Empty      => None
-    case Cons(h, t) => Some(h())
-  }
+  def headOption: Option[A] =
+    this match {
+      case Empty      => None
+      case Cons(h, t) => Some(h())
+    }
 
   def headOptionWithFoldRight: Option[A] =
     foldRight(None: Option[A])((a, _) => Some(a))
@@ -19,11 +20,12 @@ sealed trait Stream[+A] {
     loop(this, Nil).reverse
   }
 
-  def take(n: Int): Stream[A] = this match {
-    case Cons(h, t) if n > 1  => cons(h(), t().take(n - 1))
-    case Cons(h, _) if n == 1 => cons(h(), empty)
-    case _                    => empty
-  }
+  def take(n: Int): Stream[A] =
+    this match {
+      case Cons(h, t) if n > 1  => cons(h(), t().take(n - 1))
+      case Cons(h, _) if n == 1 => cons(h(), empty)
+      case _                    => empty
+    }
 
   def takeWithUnfold(n: Int): Stream[A] =
     unfold((this, n)) {
@@ -31,10 +33,11 @@ sealed trait Stream[+A] {
       case _                        => None
     }
 
-  def takeWhile(p: A => Boolean): Stream[A] = this match {
-    case Cons(h, t) if p(h()) => cons(h(), t() takeWhile p)
-    case _                    => empty
-  }
+  def takeWhile(p: A => Boolean): Stream[A] =
+    this match {
+      case Cons(h, t) if p(h()) => cons(h(), t() takeWhile p)
+      case _                    => empty
+    }
 
   def takeWhileWithUnfold(p: A => Boolean): Stream[A] =
     unfold(this) {
@@ -43,10 +46,11 @@ sealed trait Stream[+A] {
     }
 
   @scala.annotation.tailrec
-  final def drop(n: Int): Stream[A] = this match {
-    case Cons(_, t) if n > 0 => t().drop(n - 1)
-    case _                   => this
-  }
+  final def drop(n: Int): Stream[A] =
+    this match {
+      case Cons(_, t) if n > 0 => t().drop(n - 1)
+      case _                   => this
+    }
 
   // def exists2(p: A => Boolean): Boolean = this match {
   //   case Cons(h, t) => p(h()) || t().exists(p)
@@ -87,15 +91,17 @@ sealed trait Stream[+A] {
   }
 
   @scala.annotation.tailrec
-  final def foldLeft[B](z: => B)(f: (=> B, A) => B): B = this match {
-    case Empty      => z
-    case Cons(h, t) => t().foldLeft(f(z, h()))(f)
-  }
+  final def foldLeft[B](z: => B)(f: (=> B, A) => B): B =
+    this match {
+      case Empty      => z
+      case Cons(h, t) => t().foldLeft(f(z, h()))(f)
+    }
 
-  def foldRight[B](z: => B)(f: (A, => B) => B): B = this match {
-    case Cons(h, t) => f(h(), t().foldRight(z)(f))
-    case _          => z
-  }
+  def foldRight[B](z: => B)(f: (A, => B) => B): B =
+    this match {
+      case Cons(h, t) => f(h(), t().foldRight(z)(f))
+      case _          => z
+    }
 
   def takeWhile2(p: A => Boolean): Stream[A] =
     foldRight(empty[A])((a, b) =>
@@ -162,6 +168,13 @@ sealed trait Stream[+A] {
 
   def hasSubsequence[A](s: Stream[A]): Boolean =
     tails exists (_ startsWith s)
+
+  def scanRight[B](z: => B)(f: (A, => B) => B): Stream[B] =
+    foldRight(cons(z, empty)) {
+      case (a, Cons(h, t)) => cons(f(a, h()), cons(h(), t()))
+      case _               => empty
+      // this case is impossible since we start the fold with cons(z, empty)
+    }
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
@@ -213,7 +226,11 @@ object Stream {
   def from(n: Int): Stream[Int] =
     unfold(n)(s => Some((s, s + 1)))
 
-  def constant[A](a: A): Stream[A] =
-    unfold(a)(s => Some((s, s)))
+  def constant[A](a: A): Stream[A] = {
+    lazy val stream: Stream[A] = cons(a, stream)
+
+    stream
+    // unfold(a)(s => Some((s, s)))
+  }
 
 }
